@@ -189,6 +189,9 @@ DOM通过创建表示文档的树，让开发者可以随心所欲地控制网�
 
 使用DOM API，可以轻松地删除、添加、替换、修改节点
 
+------
+## **210522**
+
 >为什么DOM是必需的
 
 由于网景和微软采用不同思路开发DHTML，开发者写一个HTML页面就可以在任何浏览器中运行的好日子就此终结
@@ -202,6 +205,104 @@ DOM通过创建表示文档的树，让开发者可以随心所欲地控制网�
 前者提供了一种映射XML文档，从而方便访问和操作文档任意部分的方式
 
 后者扩展了前者，并增加了特定于HTML的对象和方法
+
+DOM并非只能通过JavaScript访问，而且确实被其他很多语言实现了
+
+不过对于浏览器来说，DOM就是使用ECMAScript实现的
+
+如今已经成为JavaScript语言的一大组成部分
+
+DOM Level 1的目标是映射文档结构，而DOM Level 2的目标则宽泛得多
+
+增加了对鼠标和用户界面事件、范围、遍历（迭代DOM节点的方法）的支持
+
+通过对象接口支持了层叠样式表（CSS）
+
+DOM Level 1中的DOM Core也被扩展以包含对XML命名空间的支持
+
+DOM Level 2新增了以下模块，以支持新的接口
+
+- DOM视图：描述追踪文档不同视图（如应用CSS样式前后的文档）的接口
+- DOM事件：描述事件及事件处理的接口
+- DOM样式：描述处理元素CSS样式的接口
+- DOM遍历和范围：描述遍历和操作DOM树的接口
+
+DOM Level 3增加了以统一的方式加载和保存文档的方法（包含在一个叫DOM Load and Save的新模块中）
+
+还有验证文档的方法（DOM Validation）
+
+在Level 3中，DOM Core经过扩展支持了所有XML 1.0的特性，包括XML Infoset、XPath和XML Base
+
+W3C不再按照Level来维护DOM了，而是作为DOM  Living  Standard来维护，其快照称为DOM4
+
+DOM4新增的内容包括替代Mutation Events的Mutation Observers
+
+并没有一个标准叫“DOM Level 0”，这只是DOM历史中的一个参照点
+
+DOM Level 0可以看作IE4和Netscape Navigator 4中最初支持的**DHTML**
+
+除了DOM Core和DOM HTML接口，有些其他语言也发布了自己的DOM标准。下面列出的语言是基于XML的，每一种都增加了该语言独有的DOM方法和接口
+
+可伸缩矢量图（SVG，Scalable Vector Graphics）
+
+>Web浏览器对DOM的支持情况
+
+DOM标准在Web浏览器实现它之前就已经作为标准发布了
+
+IE在第5版中尝试支持DOM，但直到5.5版才开始真正支持，该版本实现了DOM Level 1的大部分
+
+Firefox 3+支持全部的Level 1、几乎全部的Level 2，以及Level 3的某些部分
+
+>浏览器对象模型（BOM）
+
+用于支持访问和操作浏览器的窗口
+
+使用BOM，开发者可以操控浏览器显示页面之外的部分
+
+而BOM真正独一无二的地方，当然也是问题最多的地方，就是它是唯一一个没有相关标准的JavaScript实现
+
+HTML5改变了这个局面，这个版本的HTML以正式规范的形式涵盖了尽可能多的BOM特性
+
+由于HTML5的出现，之前很多与BOM有关的问题都迎刃而解了
+
+BOM主要针对浏览器窗口和子窗口（frame）
+
+- 弹出新浏览器窗口的能力；
+- 移动、缩放和关闭浏览器窗口的能力；
+- navigator对象，提供关于浏览器的详尽信息；
+- location对象，提供浏览器加载页面的详尽信息；
+- screen对象，提供关于用户屏幕分辨率的详尽信息；
+- performance对象，提供浏览器内存占用、导航行为和时间统计的详尽信息；
+- 对cookie的支持；
+- 其他自定义对象，如XMLHttpRequest和IE的ActiveXObject。
+
+多数浏览器对JavaScript的支持，指的是实现ECMAScript和DOM的程度
+
+>小结
+
+JavaScript是一门用来与网页交互的脚本语言，包含以下三个组成部分
+
+- ECMAScript：由ECMA-262定义并提供核心功能。
+- 文档对象模型（DOM）：提供与网页内容交互的方法和接口。
+- 浏览器对象模型（BOM）：提供与浏览器交互的方法和接口。
+
+JavaScript的这三个部分得到了五大Web浏览器（IE、Firefox、Chrome、Safari和Opera）不同程度的支持
+
+所有浏览器基本上对ES5（ECMAScript 5）提供了完善的支持
+
+而对ES6（ECMAScript 6）和ES7（ECMAScript 7）的支持度也在不断提升
+
+这些浏览器对DOM的支持各不相同，但对Level 3的支持日益趋于规范
+
+HTML5中收录的BOM会因浏览器而异，不过开发者仍然可以假定存在很大一部分公共特性
+
+
+
+
+
+
+
+
 
 
 
