@@ -123,6 +123,97 @@ ECMA-262第8版，也称为ES8、ES2017，完成于2017年6月
 - 字符串填充方法
 - 支持对象字面量最后的逗号
 
+ECMA-262第9版，也称为ES9、ES2018，发布于2018年6月
+
+- 异步迭代
+- 剩余和扩展属性
+- 一组新的正则表达式特性
+- Promise finally()
+- 模板字面量修订
+
+ECMA-262第10版，也称为ES10、ES2019，发布于2019年6月
+
+- Array.prototype.flat()/flatMap()
+- String.prototype.trimStart()/trimEnd()
+- Object.fromEntries()
+- Symbol.prototype.description
+- 定义了Function.prototype.toString()的返回值
+- 固定了Array.prototype.sort()的顺序
+- 解决了与JSON字符串兼容的问题
+- 定义了catch子句的可选绑定
+
+>ECMAScript符合性是什么意思
+
+- 支持ECMA-262中描述的所有“类型、值、对象、属性、函数，以及程序语法与语义”；
+- 支持Unicode字符标准。
+
+符合性实现还可以满足下列要求。
+
+- 增加ECMA-262中未提及的“额外的类型、值、对象、属性和函数”。ECMA-262所说的这些额外内容主要指规范中未给出的新对象或对象的新属性。
+- 支持ECMA-262中没有定义的“程序和正则表达式语法”（意思是允许修改和扩展内置的正则表达式特性）
+
+JavaScript 1.3增加了对Unicode标准的支持，并做到了所有对象都与平台无关，同时保留了JavaScript 1.2所有的特性
+
+2008年，五大浏览器（IE、Firefox、Safari、Chrome和Opera）全部兼容ECMA-262第3版
+
+IE8率先实现ECMA-262第5版，并在IE9中完整支持。Firefox  4很快也做到了
+
+>文档对象模型（DOM，Document Object Model）
+
+应用编程接口（API），用于在HTML中使用扩展的XML
+
+DOM将整个页面抽象为一组分层节点 HTML或XML页面的每个组成部分都是一种节点 包含不同的数据
+
+```html
+<html>
+  <head>
+    <title>Sample Page</title>
+  </head>
+  <body>
+    <p>Hello World!</p>
+  </body>
+</html>
+```
+
+**上面的代码可以通过DOM解析为下面的节点结构**
+
+- html
+  - head
+    - title
+      - Sample Page
+  - body
+    - p
+      - Hello World!
+
+DOM通过创建表示文档的树，让开发者可以随心所欲地控制网页的内容和结构
+
+使用DOM API，可以轻松地删除、添加、替换、修改节点
+
+>为什么DOM是必需的
+
+由于网景和微软采用不同思路开发DHTML，开发者写一个HTML页面就可以在任何浏览器中运行的好日子就此终结
+
+就在这时，万维网联盟（W3C，World Wide Web Consortium）开始了制定DOM标准的进程
+
+1998年10月，DOM Level 1成为W3C的推荐标准
+
+这个规范由两个模块组成：DOM Core和DOM HTML
+
+前者提供了一种映射XML文档，从而方便访问和操作文档任意部分的方式
+
+后者扩展了前者，并增加了特定于HTML的对象和方法
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
