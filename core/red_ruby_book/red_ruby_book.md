@@ -296,7 +296,52 @@ JavaScript的这三个部分得到了五大Web浏览器（IE、Firefox、Chrome�
 
 HTML5中收录的BOM会因浏览器而异，不过开发者仍然可以假定存在很大一部分公共特性
 
+>`<script>`元素
 
+```html
+<script
+src="./test.js"
+async
+charset="UTF-8"
+crossorigin="use-credentials"
+defer
+integrity="hash"
+language
+type="text/javascript"
+>
+console.log(666);
+</script>
+```
+
+`src="./test.js"`
+
+表示包含要执行的代码的外部文件
+
+`async`
+
+表示应该立即开始下载脚本
+
+但不能阻止其他页面动作(下载资源或等待其他脚本加载)
+
+只对外部脚本文件有效
+
+`charset="UTF-8"`
+
+规定在外部脚本文件中使用的字符编码
+
+当外部脚本文件中的字符编码与HTML文档中的编码不同时就会用到charset属性
+
+只对外部脚本文件有效
+
+`crossorigin="use-credentials"`
+
+`defer`
+
+`integrity="hash"`
+
+`language`
+
+`type="text/javascript"`
 
 
 
