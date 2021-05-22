@@ -296,6 +296,9 @@ JavaScript的这三个部分得到了五大Web浏览器（IE、Firefox、Chrome�
 
 HTML5中收录的BOM会因浏览器而异，不过开发者仍然可以假定存在很大一部分公共特性
 
+------
+## **210523**
+
 >`<script>`元素
 
 ```html
@@ -333,29 +336,113 @@ console.log(666);
 
 只对外部脚本文件有效
 
-`crossorigin="use-credentials"`
+`crossorigin="anonymous/use-credentials"`
+
+配置相关请求的CORS（跨源资源共享）设置 默认不使用CORS
+
+`crossorigin= "anonymous"`配置文件请求不必设置凭据标志
+
+`crossorigin="use-credentials"`设置凭据标志 意味着出站请求会包含凭据
 
 `defer`
 
+表示脚本可以延迟到文档完全被解析和显示之后再执行
+
+只对外部脚本文件有效
+
+在IE7及更早的版本中 对行内脚本也可以指定这个属性
+
 `integrity="hash"`
+
+允许对比接收到的资源和指定的加密签名以验证子资源完整性（SRI，Subresource Integrity）
+
+如果接收到的资源的签名与这个属性指定的签名不匹配 则页面会报错 脚本不会执行
+
+这个属性可以用于确保内容分发网络（CDN，Content Delivery Network）不会提供恶意内容
 
 `language`
 
+**废弃**
+
+最初用于表示代码块中的脚本语言（如"JavaScript"、"JavaScript 1.2"或"VBScript"）
+
 `type="text/javascript"`
 
+代替language，表示代码块中脚本语言的内容类型（也称MIME类型）
 
+按照惯例，这个值始终都是"text/javascript"
 
+尽管"text/javascript"和"text/ecmascript"都已经废弃了
 
+JavaScript文件的MIME类型通常是"application/x-javascript" 不过给type属性这个值有可能导致脚本被忽略
 
+在非IE的浏览器中有效的其他值还有"application/javascript"和"application/ecmascript"
 
+**如果这个值是module**
 
+则代码会被当成ES6模块 而且只有这时候代码中才能出现import和export关键字
 
+使用`<script>`的方式有两种
 
+通过它直接在网页中嵌入JavaScript代码/通过它在网页中包含外部JavaScript文件
 
+要嵌入行内JavaScript代码 直接把代码放在`<script>`元素中就行
 
+```html
+<script>
+  function test() {
+    console.log(666);
+  }
+</script>
+```
 
+包含在`<script>`内的代码会被从上到下解释
 
+在上面的例子中 被解释的是一个函数定义 并且该函数会被保存在**解释器环境中**
 
+在`<script>`元素中的代码被计算完成之前 页面的其余内容不会被加载 也不会被显示
+
+在使用行内JavaScript代码时 要注意代码中不能出现字符串`</script>`
+
+比如下面的代码会导致浏览器报错
+
+```html
+<script>
+  function test() {
+    console.log('</script>');
+  }
+</script>
+```
+
+浏览器解析行内脚本的方式决定了它在看到字符串`</script>`时 会将其当成结束的`</script>`标签
+
+想避免这个问题 只需要转义字符`“\”`即可
+
+```html
+<script>
+  function test() {
+    console.log('<\/script>');
+  }
+</script>
+```
+
+这样修改之后 代码就可以被浏览器完全解释不会导致任何错误
+
+要包含外部文件中的JavaScript 就必须使用src属性
+
+`<script src="example.js"></script>`
+
+文件本身只需包含要放在`<script>`的起始及结束标签中间的JavaScript代码(意思是不要`<script>`)
+
+与解释行内JavaScript一样 在解释外部JavaScript文件时 页面也会阻塞（阻塞时间也包含下载文件的时间）
+
+在XHTML文档中 可以忽略结束标签
+
+`<script src="example.js" />`
+
+以上语法不能在HTML文件中使用 因为它是无效的HTML
+
+有些浏览器不能正常处理 比如IE
 
 
 
