@@ -510,7 +510,6 @@ integrity属性是防范这种问题的一个武器，但这个属性也不是�
   <!-- 页面内容 -->
   <script src="./test.js"></script>
 </body>
-</html>
 ```
 
 `HTML4.01`为`<script>`元素定义了一个叫defer的属性
