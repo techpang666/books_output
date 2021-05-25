@@ -546,6 +546,311 @@ IE4~7展示出的都是旧的行为，IE8及更高版本则支持HTML5定义的�
 
 **对于XHTML文档，指定defer属性时应该写成defer="defer"**
 
+------
+## **210525**
+
+>异步执行脚本
+
+async属性与defer类似
+
+两者也都只适用于外部脚本，都会告诉浏览器立即开始下载
+
+不过，与defer不同的是，标记为async的脚本并不保证能按照它们出现的次序执行
+
+```html
+<script async src="./test.js"></script>
+<script async src="./test2.js"></script>
+```
+
+第二个脚本可能先于第一个脚本执行
+
+重点在于它们之间没有依赖关系
+
+给脚本添加async属性的目的是告诉浏览器，不必**等脚本下载和执行完后再加载页面(也就是直接绕过这个脚本 走后面的代码)**，同样也**不必等到该异步脚本下载和执行后**再加载其他脚本
+
+正因为如此，异步脚本不应该在加载期间修改DOM(因为修改不了)
+
+```html
+<body>
+  test
+  <script async src="./test.js"></script>
+</body>
+```
+
+```js
+document.write('test')
+```
+
+异步脚本保证会在页面的load事件前执行
+
+但可能会在DOMContentLoaded之前或之后
+
+Firefox  3.6、Safari  5和Chrome  7支持异步脚本
+
+使用async也会告诉页面你不会使用document.write，不过好的Web开发实践根本就不推荐使用这个方法
+
+**对于XHTML文档，指定async属性时应该写成async="async"**
+
+>动态加载脚本
+
+可以使用DOM API
+
+通过向DOM中动态添加script元素同样可以加载指定的脚本
+
+只要创建一个script元素并将其添加到DOM即可
+
+```html
+<!-- demo.html -->
+
+<script src="./test.js"></script>
+```
+
+```js
+// test.js
+
+let script = document.createElement('script')
+script.src = './demo.js'
+// 设置为同步加载
+script.async = false
+document.head.appendChild(script)
+```
+
+```js
+// demo.js
+
+console.log(666);
+```
+
+**在把HTMLElement元素添加到DOM且执行到这段代码之前不会发送请求(不执行代码哪来的动态script标签 里面的请求个鬼鬼)**
+
+以这种方式创建的`<script>`元素是以异步方式加载的，相当于添加了async属性
+
+不过这样做可能会有问题，因为所有浏览器都支持`createElement()`方法，但**不是所有浏览器都支持async属性**
+
+因此，如果要统一动态脚本的加载行为，可以明确将其设置为同步加载
+
+以这种方式获取的资源对**浏览器预加载器是不可见的**。这会严重影响它们在资源获取队列中的优先级。
+
+根据应用程序的工作方式以及怎么使用，这种方式可能会严重影响性能。
+
+要想让预加载器知道这些动态请求文件的存在，可以在文档头部显式声明它们
+
+```html
+<link rel="preload" href="./test.js">
+```
+
+>XHTML中的变化
+
+可扩展超文本标记语言（XHTML，Extensible HyperText Markup Language）
+
+是将HTML作为XML的应用重新包装的结果
+
+与HTML不同，在XHTML中使用JavaScript必须指定**type属性**且值为`text/javascript`
+
+**HTML中则可以没有这个属性**
+
+XHTML虽然已经退出历史舞台，但实践中偶尔可能也会遇到遗留代码
+
+在XHTML中编写代码的规则比HTML中严格，这会影响使用`<script>`元素嵌入JavaScript代码
+
+下面的代码块虽然在HTML中有效，但在XHML中是无效的
+
+```js
+if (a < b) {}
+```
+
+在HTML中，解析`<script>`元素会应用特殊规则 XHTML中则没有这些规则
+
+这意味着`a < b`语句中的小于号（<）会被解释成一个标签的开始
+
+并且由于作为标签开始的小于号后面不能有空格，这会导致语法错误
+
+避免XHTML中这种语法错误的方法有两种
+
+第一种是把所有小于号（<）都替换成对应的HTML实体形式`&lt;`
+
+```js
+if (a &lt; b) {}
+```
+
+缺点是会影响阅读
+
+第二种方法是把所有代码都包含到一个CDATA块中
+
+在XHTML（及XML）中，CDATA块表示文档中可以包含任意文本的区块
+
+其内容不作为标签来解析，因此可以在其中包含任意字符
+
+包括小于号，并且不会引发语法错误
+
+```html
+<script type="text/javascript"><![CDATA[
+  ...code
+]]></script>
+```
+
+在兼容XHTML的浏览器中，这样能解决问题。但在不支持CDATA块的非XHTML兼容浏览器中则不行
+
+为此，CDATA标记必须使用JavaScript注释来抵消
+
+```html
+<script type="text/javascript">
+// <![CDATA[
+  ...code
+// ]]>
+</script>
+```
+
+这种格式适用于所有现代浏览器 可以通过XHTML验证，而且对XHTML之前的浏览器也能优雅地降级
+
+XHTML模式会在页面的MIME类型被指定为"application/xhtml+xml"时触发
+
+**并不是所有浏览器都支持以这种方式送达的XHTML**
+
+>废弃的语法
+
+1995年 Netscape2发布以来，所有浏览器都将JavaScript作为默认的编程语言
+
+type属性使用一个MIME类型字符串来标识`<script>`的内容，但MIME类型**并没有跨浏览器标准化**
+
+即使浏览器默认使用JavaScript，在某些情况下某个无效或无法识别的MIME类型也可能导致浏览器跳过（不执行）相关代码
+
+因此，除非你使用XHTML或`<script>`标签要求或包含非JavaScript代码
+
+**最佳做法是不指定type属性**
+
+`<script>`这个元素需要应用特殊的解析规则，而这在不支持JavaScript的浏览器（特别是Mosaic）中会导致问题
+
+不支持的浏览器会把`<script>`元素的内容输出到页面上，从而破坏页面的外观
+
+对不支持JavaScript的浏览器**隐藏**嵌入的JavaScript代码
+
+最终方案是把**脚本代码包含在一个HTML注释中**
+
+```html
+<script><!--
+	function sayHi() {
+		console.log('Hi!')
+	}
+//--></script>
+```
+
+Mosaic等浏览器就可以忽略`<script>`标签中的内容
+
+而支持JavaScript的浏览器则必须识别这种模式，将其中的内容作为JavaScript来解析
+
+虽然这种格式仍然可以被所有浏览器识别和解析，但已经**不再必要**，而且不应该再使用了
+
+在XHTML模式下，这种格式也会导致脚本被忽略，因为代码处于有效的XML注释当中
+
+>行内代码与外部文件
+
+- 可维护性
+
+开发者就可以独立于使用它们的HTML页面来编辑代码
+
+- 缓存
+
+浏览器会根据特定的设置缓存所有外部链接的JavaScript文件
+
+这意味着如果两个页面都用到同一个文件，则该文件只需下载一次
+
+这最终意味着页面加载更快
+
+- 适应未来
+
+通过把JavaScript放到外部文件中，就不必考虑用XHTML或前面提到的注释黑科技
+
+包含外部JavaScript文件的语法**在HTML和XHTML中**是一样的
+
+在配置浏览器请求外部文件时，要重点考虑的一点是它们会占用多少带宽
+
+在SPDY/HTTP2中，预请求的消耗已显著降低
+
+以轻量、独立JavaScript组件形式向客户端送达脚本更具优势
+
+在初次请求时，如果浏览器支持SPDY/HTTP2，就可以从同一个地方取得一批文件，并将它们逐个放到浏览器缓存中
+
+从浏览器角度看，通过SPDY/HTTP2获取所有这些独立的资源与**获取一个大JavaScript文件的延迟**差不多
+
+在第二个页面请求时，由于你已经把应用程序切割成了轻量可缓存的文件，第二个页面也依赖的某些组件
+
+**此时已经存在于浏览器缓存中了**
+
+当然，这里假设浏览器支持SPDY/HTTP2，只有比较新的浏览器才满足
+
+如果你还想支持那些比较老的浏览器，可能还是**用一个大文件更合适**
+
+>文档模式
+
+IE5.5发明了文档模式的概念，即可以使用doctype切换文档模式
+
+最初的文档模式有两种：混杂模式（quirks  mode）和标准模式（standards  mode）
+
+前者让IE像IE5一样（支持一些非标准的特性），后者让IE具有兼容标准的行为
+
+虽然这两种模式的主要区别只体现在**通过CSS渲染的内容方面**
+
+但对JavaScript也有一些关联影响，或称为**副作用**
+
+第三种文档模式：准标准模式（almost standards mode）
+
+这种模式下的浏览器支持很多标准的特性，但是没有标准规定得那么严格
+
+主要区别在于**如何对待图片元素周围的空白**（在表格中使用图片时最明显）
+
+混杂模式在所有浏览器中都以省略文档开头的doctype声明作为开关
+
+这种约定并不合理，因为混杂模式在不同浏览器中的差异非常大，不使用黑科技基本上就没有浏览器一致性可言
+
+**标准模式通过下列几种文档类型声明开启**
+
+```html
+<!-- HTML 4.01 Strict -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- XHTML 1.0 Strict -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- HTML5 -->
+<!DOCTYPE html>
+```
+
+**准标准模式通过过渡性文档类型（Transitional）和框架集文档类型（Frameset）来触发**
+
+```html
+<!-- HTML 4.01 Transitional -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- HTML 4.01 Frameset -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!-- XHTML 1.0 Transitional -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- XHTML 1.0 Frameset -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+```
+
+>`<noscript>`元素
+
+针对早期浏览器不支持JavaScript的问题，需要一个页面优雅降级的处理方案。最终，`<noscript>`元素出现，被用于给不支持JavaScript的浏览器提供替代内容
+
+它可以包含任何**可以出现在`<body>`中的HTML元素**，`<script>`除外
+
+在下列两种情况 浏览器将显示包含在`<noscript>`中的内容
+- 浏览器不支持脚本
+- 浏览器对脚本的支持被关闭
+
+```html
+<noscript>
+	<p>如果浏览器支持脚本，则用户永远不会看到它</p>
+</noscript>
+```
+
+>小结
+
+- 要包含外部JavaScript文件，必须将src属性设置为要包含文件的URL。文件可以跟网页在同一台服务器上，**也可以位于完全不同的域**。
+- 所有`<script>`元素会依照它们在网页中出现的次序被解释。在**不使用defer和async属性**的情况下，包含在`<script>`元素中的代码必须严格按次序解释。
+- 对不推迟执行的脚本，浏览器必须解释完位于`<script>`元素中的代码，然后**才能继续渲染**页面的剩余部分。为此，通常应该把`<script>`元素放到**页面末尾**，介于主内容之后及`</body>`标签之前。
+- 可以使用defer属性把脚本**推迟到文档渲染完毕后再执行**。推迟的脚本原则上按照它们被列出的次序执行。
+- 可以使用async属性表示脚本**不需要等待其他脚本，同时也不阻塞文档渲染**，即异步加载。异步脚本**不能保证**按照它们在页面中出现的次序执行。
+- 通过使用`<noscript>`元素，可以指定在浏览器不支持脚本时显示的内容。**如果浏览器支持并启用脚本**，则`<noscript>`元素中的任何内容都不会被渲染
 
 
 
@@ -560,6 +865,70 @@ IE4~7展示出的都是旧的行为，IE8及更高版本则支持HTML5定义的�
 
 
 
+
+
+
+
+
+
+
+------
+## **一些扩展**
+
+>Element/HTMLElement/HTMLHtmlElement三者的区别
+
+- Element对象表示XML文档中的元素
+- HTMLElement对象表示HTML中的一个元素
+- 都是继承Document的HTMLHtmlElement(老版已弃用)
+
+HTMLElement对象继承了Element对象的标准属性 也实现了一些非标准属性
+
+它们都可以看成是DOM(文档对象模型) DOM是W3C(万维网联盟)的推荐标准
+
+>HTML/XML/XHTML三者的区别
+
+- HTML: HyperText Markup Language / 超文本标记语言
+- XML: Extensible Markup Language / 可扩展标记语言
+- XHTML: Extensible Hypertext Markup Language / 可扩展超文本标记语言
+
+HTML是用来描述和定义网页内容的标记语言 是构成网页的最基本的东西
+
+所谓超文本 就是说它除了能标记文本 还能标记其他的内容 比如图片/链接/音频/视频等
+
+它的作用就是一个规范 告诉所有浏览器都统一标准
+
+比如我给这段文字加个`<p>`标签
+
+那就是告诉浏览器 这是一个段落 浏览器看到后就会正确解析 产生相应的行为
+
+XML的表现形式就是给一个文档加一堆标签 说明每段文字是干什么的 有什么意义
+
+这样做的目的是方便存储/传输/分享数据 人和机器都可以很方便的阅读
+
+XML和HTML有一个明显的区别就是
+
+HTML的标签都是预定义的 你不可以自己随便增加
+
+比如你不能自己写一个标签`<test>` 但是XML可以 你可以自己发明标签
+
+HTML和XML一结合就产生了XHTML XHTML就是以XML的语法形式来写HTML
+
+XHTML出现的原因是 HTML是一种语法形式比较松散的标记语言 语法要求也不严格
+
+比如大小可以混用 属性值随便加不加引号 单引号还是双引号也随便 标签也可以不闭合
+
+HTML标准的制定者W3C就把XML的语法形式往HTML上一套 就出现了XHTML
+
+可以把XHTML理解为HTML的严格语法形式 除此之外其它方面基本一样
+
+XHTML有一些强制的要求
+
+1. 必须包含一个文件头声明`<!DOCTYPE>`
+2. 所有元素名必须小写
+3. 所有空元素必须关闭
+4. 所有属性名必须小写
+5. 所有属性值必须加引号
+6. 所有布尔值属性必须加上属性值
 
 
 
