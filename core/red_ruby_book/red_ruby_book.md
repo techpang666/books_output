@@ -979,57 +979,164 @@ if (test) {
 
 在控制语句中使用代码块可以让内容更清晰，在需要修改代码时也可以**减少出错的可能性**
 
+------
+## **210527**
 
+>关键字/保留字
 
+262规定了一组关键字 有特殊作用 不能作为标识符/属性名
 
+- break
+- do
+- if
+- typeof
+- try/catch
 
+还有一些**未来的保留字**
 
+- enum(始终保留)
+- public/private/let/static/package(严格模式)
+- await(模块代码)
 
+>变量
 
+**变量是松散类型的** 可以用于保存任何类型的数据
 
+**每个变量不过是用于保存任意值的命名占位符**
 
+var/let/const var可以兼容任何版本 后两个只能es6及更高版本
 
+>var
 
+定义变量 可以使用var操作符
 
+```js
+var test;
+```
 
+上面定义了一个test的变量 可以保存任何值
 
+没有初始化的情况 **变量会保存一个特殊值undefined**
 
+ECMA实现了变量初始化 可以同时定义变量并赋值
 
+```js
+var test = 'test';
+```
 
+上面的test被定义为一个保存字符串值`test`的变量
 
+这样初始化变量不会将它识别为字符串类型 只是一个简单的赋值而已 后面可以改值/改值的类型
 
+```js
+var test = 'test';
+test = 100 /* 合法 不推荐 */
+```
 
+test被定义了保存字符串值的变量 后面被重写为保存数值
 
+虽然不推荐 但在ECMA中是合法的
 
+>var声明作用域
 
+使用var关键字会导致这个变量成为包含它的函数的**局部变量**
 
+函数退出的时候这个变量就被销毁了 log就会出错
 
+```js
+function demo() {
+  var test = 'test'
+}
+demo()
+console.log(test); /* ReferenceError: test is not defined */
+```
 
+上面的代码在调用这个函数的时候 创建变量并赋值 但是调用后变量又被销毁了 然后log就出错了
 
+不过在函数内部定义变量 省略var关键字 可以**创建全局变量** 这个时候就不会报错
 
+只要调用这个函数 就会定义变量 可以函数外部访问
 
+**但是不推荐这么做**
 
+局部作用域中定义全局变量难以维护/甚至困惑
 
+**在严格模式下** 这样给未声明的变量赋值 会报错
 
+```js
+function demo() {
+  // 省略关键字
+  test = 'test'
+}
+demo()
+console.log(test); /* test */
+```
 
+```js
+function demo() {
+  // 严格模式
+  'use strict'
+  test = 'test'
+}
+demo()
+console.log(test); /* ReferenceError: test is not defined */
+```
 
+定义多个变量 可以逗号隔开及可选的初始化
 
+```js
+var name = 'test',
+	age = 18,
+	check = true;
+```
 
+因为ECMA是松散类型的 可以用一条语句声明不同类型的变量
 
+```js
+"use strict";
 
+var eval;
+console.log(eval); /* SyntaxError: Unexpected eval or arguments in strict mode */
+```
 
+严格模式下 不能定义名为`eval/arguments`的变量 会报错
 
+>var声明提升
 
+使用var的时候 下面的代码不会报错
 
+使用这个关键字的变量 会自动提升到函数作用域顶部 但log的结果是undefined
 
+```js
+function test() {
+  console.log(age);
+  var age = 18
+}
+test() /* undefined */
+```
 
+```js
+function test() {
+	var age;
+	console.log(age);
+	age = 18;
+}
+test(); /* undefined */
+```
 
+还有 使用var多次声明同一个变量是没有问题的
 
+```js
+function test() {
+  var age = 8
+  var age = 10
+  var age = 18
+  console.log(age);
+}
+test() /* 18 */
+```
 
-
-
-
-
+>[带你去更好玩的地方](https://github.com/techpang666/js_relearn/blob/master/code/_others/red_ruby_book.js)
 
 ------
 ## **一些扩展**
