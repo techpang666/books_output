@@ -1115,6 +1115,8 @@ function test() {
 test() /* undefined */
 ```
 
+之所以不会报错 是因为ECMA将代码等同于下面这样运行了
+
 ```js
 function test() {
 	var age;
