@@ -1,7 +1,8 @@
 
 # **红宝书输出行动⚡️**
 >品读一下 动动手code一下  
->[一些勘误及资源](https://www.ituring.com.cn/book/2472)  
+- [一些勘误及资源](https://www.ituring.com.cn/book/2472)
+- [一些练习代码](https://github.com/techpang666/js_relearn/blob/master/code/_others/red_ruby_book.js)
 
 ------
 ## **210520**
